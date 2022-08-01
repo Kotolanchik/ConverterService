@@ -1,9 +1,49 @@
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Конвертация файлов</title>
+</head>
 <body>
 <form method="POST" enctype="multipart/form-data" action="/upload">
-    File to upload:
+    Загрузить файл:
     <input type="file" name="file"><br/>
-    <input type="submit" value="Upload"> Press here to upload the file!
+    <input type="submit" value="Загрузить"> Нажмите здесь, чтобы загрузить файл!
 </form>
+<hr/>
+<form method="POST" enctype="multipart/form-data" action="/convert/unique">
+    Выберите тип конвертации:
+    <select name="convertType">
+        <option selected value="XML2JSON">xml to json</option>
+        <option value="JSON2XML">json to xml</option>
+    </select><br/>
+    Загружаемый файл для конвертации: <input type="file" name="firstFile"><br/>
+    Имя второго файла(не забудьте дописать расширение): <input type="text" name="secondFile"><br/>
+    <input type="submit" value="Конвертировать"> Нажмите здесь для запуска конвертации файлов!
+</form>
+<hr/>
+<form method="GET" action="/files">
+    <input type="submit" value="Посмотреть список файлов"> Нажмите здесь, чтобы вывести список файлов доступных для скачивания!
+</form>
+<hr/>
+<form method="GET" enctype="multipart/form-data" action="/download">
+    Имя файл:
+    <input type="text" name="nameFile"><br/>
+    <input type="submit" value="Скачать"> Нажмите здесь, чтобы скачать файл!
+</form>
+<hr/>
+<form method="GET" enctype="multipart/form-data" action="/convert">
+    Произвести конвертацию файла, который загружен на сервер, и сохранить на сервере.
+    Выберите тип конвертации:
+    <select name="convertType">
+        <option selected value="XML2JSON">xml to json</option>
+        <option value="JSON2XML">json to xml</option>
+    </select><br/>
+    Имя файла, который необходимо конвертировать:
+    <input type="text" name="firstFile"><br/>
+    Желаемое имя файла, в который будет конвертирован файл:
+    <input type="text" name="secondFile"><br/>
+    <input type="submit" value="Конвертировать"> Нажмите здесь, чтобы скачать файл!
+</form>
+<hr/>
 </body>
 </html>
