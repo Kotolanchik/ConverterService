@@ -1,14 +1,16 @@
 package ru.kolodkin.ConverterService;
 
 import jakarta.xml.bind.JAXBException;
-import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kolodkin.ConverterService.converterTool.factory.ConverterFactory;
 import ru.kolodkin.ConverterService.converterTool.factory.ConverterType;
@@ -22,36 +24,40 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@Log4j2
 public class ConverterServiceController {
     private static final String pathDocumentConvert = "src/main/java/ru/kolodkin/ConverterService/convertDocument/";
 
     @PostMapping("/upload")
-    public @ResponseBody String uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
         String name = file.getOriginalFilename();
         if (file.isEmpty()) {
-            return "Вам не удалось загрузить " + name + ", потому что файл пустой.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Вам не удалось загрузить " + name + ", потому что файл пустой.");
         }
 
         try (BufferedOutputStream stream = new BufferedOutputStream(
                 new FileOutputStream(pathDocumentConvert + file.getOriginalFilename()))) {
             stream.write(file.getBytes());
-            return "Вы удачно загрузили " + name + "!";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Вы удачно загрузили " + name + "!");
         } catch (Exception exception) {
-            return "Вам не удалось загрузить " + name + " => " + exception.getMessage();
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Вам не удалось загрузить " + name + " => " + exception.getMessage());
         }
     }
 
     @GetMapping("/convert")
-    public @ResponseBody String convert(@RequestParam("convertType") String converterType,
+    public ResponseEntity convert(@RequestParam("convertType") String converterType,
                                         @RequestParam("firstFile") String firstFile,
                                         @RequestParam("secondFile") String secondFile) {
         if (!Validate.validateArgument(converterType, firstFile, secondFile)) {
-            return "Входные аргументы некорректны.";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Входные аргументы некорректны.");
         }
 
         if (Files.notExists(Path.of(pathDocumentConvert + firstFile))) {
-            return "Файл для конвертации не загружен на сервер.";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Файл для конвертации не загружен на сервер.");
         }
 
         try (val inputStream = new FileInputStream(pathDocumentConvert + firstFile);
@@ -61,16 +67,23 @@ public class ConverterServiceController {
                     .convert(inputStream, outputStream);
 
         } catch (Exception exception) {
-            return "Вам не удалось конвертировать файл => " + exception.getMessage();
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Вам не удалось конвертировать файл => " + exception.getMessage());
         }
 
-        return "Конвертация прошла успешно.";
+        return ResponseEntity.status(HttpStatus.OK).body("Конвертация прошла успешно.");
     }
 
     @GetMapping("/download")
     public ResponseEntity downloadResult(@RequestParam("nameFile") String nameFile) {
+        if(nameFile.equals("")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Пустой запрос.");
+        }
+
         if (Files.notExists(Path.of(pathDocumentConvert + nameFile))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Файл: " + nameFile + " на сервере отсутствует!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Файл: " + nameFile + " на сервере отсутствует!");
         }
 
         FileSystemResource resource = new FileSystemResource(pathDocumentConvert + nameFile);
@@ -81,20 +94,20 @@ public class ConverterServiceController {
                 .build()
         );
 
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        return new ResponseEntity(resource, headers, HttpStatus.OK);
     }
 
     @GetMapping("/files")
-    public String getAllFile() {
+    public ResponseEntity getAllFile() {
         val files = Arrays.stream(Objects.requireNonNull(new File(pathDocumentConvert).listFiles()))
                 .map(File::getName)
                 .collect(Collectors.toList());
 
         if (files.size() == 0) {
-            return "Нет файлов.";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Нет файлов.");
         }
 
-        return files.toString();
+        return ResponseEntity.status(HttpStatus.OK).body(files.toString());
     }
 
     @PostMapping("/convert/unique")
@@ -103,11 +116,11 @@ public class ConverterServiceController {
                                         @RequestParam("secondFile") String secondFile) {
         String fileName = firstFile.getOriginalFilename();
         if (!Validate.validateArgument(converterType, fileName, secondFile)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Входные аргументы некорректны.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Входные аргументы некорректны.");
         }
 
         if (firstFile.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     "Вам не удалось загрузить " + fileName + ", потому что файл пустой.");
         }
 
@@ -115,7 +128,7 @@ public class ConverterServiceController {
                 new FileOutputStream(pathDocumentConvert + fileName));) {
             stream.write(firstFile.getBytes());
         } catch (IOException exception) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Вам не удалось загрузить " + fileName + " => " + exception.getMessage());
         }
 
@@ -126,10 +139,10 @@ public class ConverterServiceController {
                     .convert(inputStream, outputStream);
 
         } catch (IOException exception) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Вам не удалось конвертировать файл => " + exception.getMessage());
         } catch (JAXBException exception) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Ошибка при преобразовании содержания файла в объект. Проверьте правильность ваших данных непосредственно в файле.");
         }
 
