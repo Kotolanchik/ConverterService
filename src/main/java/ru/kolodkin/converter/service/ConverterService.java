@@ -57,8 +57,8 @@ public class ConverterService {
     }
 
     public String getAllFile() {
-        try {
-            val files = Files.walk(Paths.get(uploadPath))
+        try (val stream = Files.walk(Paths.get(uploadPath))) {
+            val files = stream
                     .map(file -> file.getFileName().toString())
                     .collect(toList());
 
