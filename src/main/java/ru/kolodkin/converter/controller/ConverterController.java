@@ -27,7 +27,7 @@ import java.util.Objects;
 
 
 @RestController
-public class ConverterServiceController {
+public class ConverterController {
     @Value("${upload.path}")
     private String uploadPath;
     @Autowired
