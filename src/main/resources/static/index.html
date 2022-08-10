@@ -4,35 +4,28 @@
     <title>Конвертация файлов</title>
 </head>
 <body>
+<hr/>
 <form method="POST" enctype="multipart/form-data" action="/upload">
+    <h3>Загрузить файл на сервер.</h3>
     Загрузить файл:
-    <input type="file" name="file"><br/>
+    <input type="file" name="file"style="margin-bottom:10px"><br/>
     <input type="submit" value="Загрузить"> Нажмите здесь, чтобы загрузить файл!
 </form>
 <hr/>
-<form method="POST" enctype="multipart/form-data" action="/convert/unique">
-    Выберите тип конвертации:
-    <select name="convertType">
-        <option selected value="XML2JSON">xml to json</option>
-        <option value="JSON2XML">json to xml</option>
-    </select><br/>
-    Загружаемый файл для конвертации: <input type="file" name="firstFile"><br/>
-    Имя второго файла(не забудьте дописать расширение): <input type="text" name="secondFile"><br/>
-    <input type="submit" value="Конвертировать"> Нажмите здесь для запуска конвертации файлов!
-</form>
-<hr/>
 <form method="GET" action="/files">
-    <input type="submit" value="Посмотреть список файлов"> Нажмите здесь, чтобы вывести список файлов доступных для скачивания!
+    <input type="submit" value="Посмотреть список файлов"> Нажмите здесь, чтобы вывести список файлов доступных для
+    скачивания!
 </form>
 <hr/>
 <form method="GET" enctype="multipart/form-data" action="/download">
+    <h3>Сохранить xml или json файл на своё устройство.</h3>
     Имя файл:
-    <input type="text" name="nameFile"><br/>
+    <input type="text" name="nameFile" style="margin-bottom:10px"><br/>
     <input type="submit" value="Скачать"> Нажмите здесь, чтобы скачать файл!
 </form>
 <hr/>
 <form method="GET" enctype="multipart/form-data" action="/convert">
-    Произвести конвертацию файла, который загружен на сервер, и сохранить на сервере.
+   <h3> Конвертация файла, который загружен на сервер и обработанный файл также сохраниться на сервере. Необходима будет ручная загрузка нужного файла.</h3>
     Выберите тип конвертации:
     <select name="convertType">
         <option selected value="XML2JSON">xml to json</option>
@@ -41,8 +34,20 @@
     Имя файла, который необходимо конвертировать:
     <input type="text" name="firstFile"><br/>
     Желаемое имя файла, в который будет конвертирован файл:
-    <input type="text" name="secondFile"><br/>
-    <input type="submit" value="Конвертировать"> Нажмите здесь, чтобы скачать файл!
+    <input type="text" name="secondFile" style="margin-bottom:10px"><br/>
+    <input type="submit" value="Конвертировать"> Нажмите здесь, чтобы конвертировать!
+</form>
+<hr/>
+<form method="POST" enctype="multipart/form-data" action="/convert/unique">
+    <h3>Файл не будет загружен на сервер. Файл после конвертации сразу загружается на ваше устройство.</h3>
+    Выберите тип конвертации:
+    <select name="convertType">
+        <option selected value="XML2JSON">xml to json</option>
+        <option value="JSON2XML">json to xml</option>
+    </select><br/>
+    Загружаемый файл для конвертации: <input type="file" name="firstFile"><br/>
+    Имя второго файла(не забудьте дописать расширение): <input type="text" name="secondFile" style="margin-bottom:10px"><br/>
+    <input type="submit" value="Конвертировать"> Нажмите здесь для запуска конвертации файлов!
 </form>
 <hr/>
 </body>
