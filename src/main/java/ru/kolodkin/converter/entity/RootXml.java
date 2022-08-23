@@ -1,4 +1,4 @@
-package ru.kolodkin.converter.model;
+package ru.kolodkin.converter.entity;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;

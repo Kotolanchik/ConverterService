@@ -1,69 +1,51 @@
 package ru.kolodkin.converter.service;
 
+import com.google.common.collect.ImmutableSet;
 import jakarta.xml.bind.JAXBException;
-import lombok.extern.log4j.Log4j2;
 import lombok.val;
-import ru.kolodkin.converter.model.Ram;
-import ru.kolodkin.converter.model.Rams;
-import ru.kolodkin.converter.model.RootXml;
-import ru.kolodkin.converter.service.read.XMLReader;
-import ru.kolodkin.converter.service.write.JSONWriter;
+import org.apache.commons.lang3.StringUtils;
+import ru.kolodkin.converter.entity.Ram;
+import ru.kolodkin.converter.entity.Rams;
+import ru.kolodkin.converter.entity.RootXml;
+import ru.kolodkin.converter.tool.mapper.read.XMLReader;
+import ru.kolodkin.converter.tool.mapper.write.JSONWriter;
+import ru.kolodkin.converter.tool.Validate;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Set;
 
-import static java.util.stream.Collectors.toUnmodifiableSet;
+import static java.util.stream.Collectors.toSet;
 
-@Log4j2
-public final class XmlToJson implements Converter {
-    private final XMLReader xmlReader = new XMLReader();
-    private final JSONWriter jsonWriter = new JSONWriter();
-
+public final class XmlToJson extends Converter<ArrayList<Rams>, RootXml> {
     public void convert(InputStream input, OutputStream output) throws JAXBException, IOException {
-        jsonWriter.write(
-                transformXmlToJson(xmlReader.read(input)),
+        JSONWriter.write(
+                transform(XMLReader.read(input)),
                 output
         );
     }
 
-    private ArrayList<Rams> transformXmlToJson(RootXml rootXml) {
-        if (rootXml == null) {
-            throw new NullPointerException("Пустой xml файл.");
-        }
+    ArrayList<Rams> transform(final RootXml rootXml) {
+        Validate.validateNullObject(rootXml);
 
         val ramListForJson = new ArrayList<Rams>();
-        for (val firm : getNameFirms(rootXml)) {
-            ramListForJson.add(new Rams(firm));
-        }
+        getUniqueFirm(rootXml)
+                .forEach(firm -> ramListForJson.add(new Rams(firm)));
 
         for (val rams : ramListForJson) {
-            for (val ram : rootXml.getRamList()) {
-                if (ram.getFirm().equals(rams.getFirm())) {
-                    rams.getRam().add(Ram.builder()
-                            .idRam(ram.getIdRam())
-                            .title(ram.getTitle())
-                            .releaseYear(ram.getReleaseYear())
-                            .specifications(ram.getSpecifications())
-                            .build()
-                    );
-                }
-            }
+            rootXml.getRamList().stream()
+                    .filter(ram -> StringUtils.equals(rams.getFirm(), ram.getFirm()))
+                    .forEach(ram -> rams.getRam().add(ram));
         }
 
         return ramListForJson;
     }
 
-    /**
-     * @param rootXml Xml модель.
-     * @return Возвращает уникальные названия всех фирм из модели.
-     */
-    private Set<String> getNameFirms(RootXml rootXml) {
-        return rootXml.getRamList()
+    private ImmutableSet<String> getUniqueFirm(final RootXml rootXml) {
+        return ImmutableSet.copyOf(rootXml.getRamList()
                 .stream()
                 .map(Ram::getFirm)
-                .collect(toUnmodifiableSet());
+                .collect(toSet()));
     }
 }

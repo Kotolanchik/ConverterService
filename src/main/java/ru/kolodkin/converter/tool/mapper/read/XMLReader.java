@@ -1,15 +1,13 @@
-package ru.kolodkin.converter.service.read;
+package ru.kolodkin.converter.tool.mapper.read;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import ru.kolodkin.converter.model.RootXml;
+import ru.kolodkin.converter.entity.RootXml;
 
 import java.io.InputStream;
 
-
-public final class XMLReader implements IReader<RootXml> {
-    @Override
-    public RootXml read(InputStream inputStream) throws JAXBException {
+public final class XMLReader {
+    public static RootXml read(final InputStream inputStream) throws JAXBException {
         return (RootXml) JAXBContext.newInstance(RootXml.class)
                 .createUnmarshaller()
                 .unmarshal(inputStream);

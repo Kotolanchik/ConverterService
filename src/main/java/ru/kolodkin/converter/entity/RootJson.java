@@ -1,4 +1,4 @@
-package ru.kolodkin.converter.model;
+package ru.kolodkin.converter.entity;
 
 import lombok.*;
 

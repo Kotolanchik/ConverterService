@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface Converter {
-    void convert(InputStream input, OutputStream output) throws IOException, JAXBException;
+public abstract class Converter<T, S> {
+    public abstract void convert(InputStream input, OutputStream output) throws IOException, JAXBException;
+
+    abstract T transform(S root);
 }

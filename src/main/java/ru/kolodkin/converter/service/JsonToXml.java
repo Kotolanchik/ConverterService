@@ -1,55 +1,46 @@
 package ru.kolodkin.converter.service;
 
 import jakarta.xml.bind.JAXBException;
-import lombok.extern.log4j.Log4j2;
 import lombok.val;
-import ru.kolodkin.converter.model.Ram;
-import ru.kolodkin.converter.model.RootJson;
-import ru.kolodkin.converter.model.RootXml;
-import ru.kolodkin.converter.service.read.JSONReader;
-import ru.kolodkin.converter.service.write.XMLWriter;
+import ru.kolodkin.converter.entity.Ram;
+import ru.kolodkin.converter.entity.RootJson;
+import ru.kolodkin.converter.entity.RootXml;
+import ru.kolodkin.converter.tool.mapper.read.JSONReader;
+import ru.kolodkin.converter.tool.mapper.write.XMLWriter;
+import ru.kolodkin.converter.tool.Validate;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
 
-@Log4j2
-public final class JsonToXml implements Converter {
-    private final JSONReader jsonReader = new JSONReader();
-    private final XMLWriter xmlWriter = new XMLWriter();
-
+public final class JsonToXml extends Converter<RootXml, RootJson> {
     public void convert(InputStream inputStream, OutputStream outputStream) throws IOException, JAXBException {
-        xmlWriter.write(
-                transformJsonToXml(jsonReader.read(inputStream)),
+        XMLWriter.write(
+                transform(JSONReader.read(inputStream)),
                 outputStream
         );
     }
 
-    private RootXml transformJsonToXml(RootJson rootJson) {
-        if (rootJson == null) {
-            throw new NullPointerException("Пустой json файл.");
-        }
+    RootXml transform(final RootJson rootJson) {
+        Validate.validateNullObject(rootJson);
 
         val listRam = new ArrayList<Ram>();
-        for (int rootIndex = 0; rootIndex < rootJson.getRams().size(); rootIndex++) {
-            for (int ramsIndex = 0; ramsIndex < rootJson.getRams().get(rootIndex).getRam().size(); ramsIndex++) {
-                listRam.add(Ram.builder()
-                        .firm(rootJson.getRams().get(rootIndex).getFirm())
-                        .specifications(rootJson.getRams().get(rootIndex).getRam().get(ramsIndex).getSpecifications())
-                        .idRam(rootJson.getRams().get(rootIndex).getRam().get(ramsIndex).getIdRam())
-                        .releaseYear(rootJson.getRams().get(rootIndex).getRam().get(ramsIndex).getReleaseYear())
-                        .title(rootJson.getRams().get(rootIndex).getRam().get(ramsIndex).getTitle())
-                        .build()
-                );
-            }
-        }
+        rootJson.getRams()
+                .forEach(rams -> rams.getRam()
+                        .forEach(ram -> listRam.add(Ram.builder()
+                                .firm(rams.getFirm())
+                                .specifications(ram.getSpecifications())
+                                .idRam(ram.getIdRam())
+                                .releaseYear(ram.getReleaseYear())
+                                .title(ram.getTitle())
+                                .build())));
 
         return new RootXml(listRam.stream()
-                .sorted((Comparator.comparingInt(Ram::getIdRam)))
+                .sorted((comparingInt(Ram::getIdRam)))
                 .collect(toList()));
     }
 }
