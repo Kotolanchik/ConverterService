@@ -1,4 +1,4 @@
-package ru.kolodkin.converter.convert.factory;
+package ru.kolodkin.converter.tool.factory;
 
 import lombok.experimental.UtilityClass;
 import ru.kolodkin.converter.service.Converter;

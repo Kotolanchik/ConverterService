@@ -8,8 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.kolodkin.converter.convert.factory.ConverterFactory;
-import ru.kolodkin.converter.convert.factory.ConverterType;
+import ru.kolodkin.converter.tool.factory.ConverterFactory;
+import ru.kolodkin.converter.tool.factory.ConverterType;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -37,11 +37,13 @@ public class ConverterService {
     public String convert(String converterType, String firstFile, String secondFile) throws IOException, JAXBException {
         try (val inputStream = new FileInputStream(uploadPath + firstFile);
              val outputStream = new FileOutputStream(uploadPath + secondFile)) {
+            log.info("Начало конвертации.");
 
             ConverterFactory
                     .createConverter(ConverterType.valueOf(converterType))
                     .convert(inputStream, outputStream);
 
+            log.info("Конец конвертации.");
         } catch (IOException | JAXBException exception) {
             log.error("Непредвиденная ошибка: ", exception);
             return "Файл не удалось конвертировать.";
@@ -67,7 +69,6 @@ public class ConverterService {
     public byte[] uniqueConvert(String converterType, MultipartFile firstFile) throws IOException, JAXBException {
         try (val inputStream = firstFile.getInputStream();
              val byteArrayOutputStream = new ByteArrayOutputStream()) {
-
             log.info("Начало конвертации.");
 
             ConverterFactory.createConverter(ConverterType.valueOf(converterType))
