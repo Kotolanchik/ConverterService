@@ -1,35 +1,38 @@
 <html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-    <title>Конвертация файлов</title>
-</head>
-<body class="container position-relative">
-<div class="d-flex justify-content-between bd-highlight mb-2 rounded" style="margin-top:25px;background-color:#00a854;padding:25px">
-    <a href="upload.html" class="btn btn-success" style="font-size:20px;text-decoration: none;">1. Загрузить файл</a>
-    <a href="download.html" class="btn btn-success " style="font-size:20px;text-decoration: none;">2. Скачать файл</a>
-    <a href="convert.html" class=" btn btn-success " style="font-size:20px;text-decoration: none;">3. Конвертация</a>
-    <a href="uniqueConvert.html" class=" btn btn-success"
-       style="font-size:20px;text-decoration: none;">4. Уникальная конвертация</a>
-    <form method="GET" action="/files">
-        <button type="submit" class="btn btn-success" style="font-size:20px;">5. Посмотреть список файлов</button>
-    </form>
-</div>
-<div class="bg-secondary text-white position-absolute top-50 start-50 translate-middle rounded"  style="font-size:18px;padding:20px; " align="center">
-    <h3>Легенда кнопок:</h3>
-    <ol class="list-group list-group-numbered" style="text-align:center; margin:20px;">
-        <li class="list-group-item">Загрузить файл на сервер.</li>
-        <li class="list-group-item">Скачать файл с сервера, если такой существует на нём.</li>
-        <li class="list-group-item">Конвертировать файл, который есть на сервере, и скачать результат конвертации.</li>
-        <li class="list-group-item" >Выбрать файл (без сохранения на сервере), конвертировать и автоматически скачать.</li>
-        <li class="list-group-item">Посмотреть все файлы, которые доступны для скачивания.</li>
-    </ol>
-    <h5>Конвертация происходит из XML в JSON и наоборот, не забывайте писать расширение в названии файлов.</h5>
-    <h6>*Рекомендуется использовать уникальную конвертацию, поскольку результат будет получен сразу.</h6>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
-        crossorigin="anonymous"></script>
-</body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+        <title>Конвертация файлов</title>
+    </head>
+    <body class="container position-relative">
+        <div class="d-flex justify-content-between bd-highlight mb-2 rounded"
+             style="margin-top:25px;background-color:#00a854;padding:25px">
+            <a href="upload.html" class="btn btn-success" style="font-size:20px;text-decoration: none;">1. Загрузить файл</a>
+            <a href="download.html" class="btn btn-success " style="font-size:20px;text-decoration: none;">2. Скачать файл</a>
+            <a href="convert.html" class=" btn btn-success " style="font-size:20px;text-decoration: none;">3. Конвертация</a>
+            <a href="uniqueConvert.html" class=" btn btn-success"
+               style="font-size:20px;text-decoration: none;">4. Уникальная конвертация</a>
+            <form method="GET" action="/files">
+                <button type="submit" class="btn btn-success" style="font-size:20px;">5. Посмотреть список файлов</button>
+            </form>
+        </div>
+        <div class="bg-secondary text-white position-absolute top-50 start-50 translate-middle rounded"
+             style="font-size:18px;padding:20px; " align="center">
+            <h3>Легенда кнопок:</h3>
+            <ol class="list-group list-group-numbered" style="text-align:center; margin:20px;">
+                <li class="list-group-item">Загрузить файл на сервер.</li>
+                <li class="list-group-item">Скачать файл с сервера, если такой существует.</li>
+                <li class="list-group-item">Конвертировать файл, который существует на сервере, скачать результат.</li>
+                <li class="list-group-item">Загрузить файл, конвертировать и скачать на лету.</li>
+                <li class="list-group-item">Посмотреть все файлы, которые доступны для скачивания.</li>
+            </ol>
+            <h5>Конвертация происходит из XML в JSON и наоборот, не забывайте писать расширение в названии файлов.</h5>
+            <h6>*Рекомендуется использовать уникальную конвертацию, поскольку результат будет получен сразу.</h6>
+            <h6>*Файлы загруженные на сервер будут удалены в 14:30 15-го числа каждого месяца.</h6>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+                crossorigin="anonymous"></script>
+    </body>
 </html>

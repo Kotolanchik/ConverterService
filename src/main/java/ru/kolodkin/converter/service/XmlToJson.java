@@ -2,6 +2,7 @@ package ru.kolodkin.converter.service;
 
 import com.google.common.collect.ImmutableSet;
 import jakarta.xml.bind.JAXBException;
+import lombok.NonNull;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import ru.kolodkin.converter.entity.Ram;
@@ -9,7 +10,6 @@ import ru.kolodkin.converter.entity.Rams;
 import ru.kolodkin.converter.entity.RootXml;
 import ru.kolodkin.converter.tool.mapper.read.XMLReader;
 import ru.kolodkin.converter.tool.mapper.write.JSONWriter;
-import ru.kolodkin.converter.tool.Validate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import static java.util.stream.Collectors.toSet;
 
-public final class XmlToJson extends Converter<ArrayList<Rams>, RootXml> {
+public final class XmlToJson implements Converter<ArrayList<Rams>, RootXml> {
     public void convert(InputStream input, OutputStream output) throws JAXBException, IOException {
         JSONWriter.write(
                 transform(XMLReader.read(input)),
@@ -26,9 +26,7 @@ public final class XmlToJson extends Converter<ArrayList<Rams>, RootXml> {
         );
     }
 
-    ArrayList<Rams> transform(final RootXml rootXml) {
-        Validate.validateNullObject(rootXml);
-
+    public ArrayList<Rams> transform(@NonNull final RootXml rootXml) {
         val ramListForJson = new ArrayList<Rams>();
         getUniqueFirm(rootXml)
                 .forEach(firm -> ramListForJson.add(new Rams(firm)));

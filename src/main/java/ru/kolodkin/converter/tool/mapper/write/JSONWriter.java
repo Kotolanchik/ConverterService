@@ -2,7 +2,7 @@ package ru.kolodkin.converter.tool.mapper.write;
 
 import ru.kolodkin.converter.entity.Rams;
 import ru.kolodkin.converter.entity.RootJson;
-import ru.kolodkin.converter.tool.ObjectMapperInstance;
+import ru.kolodkin.converter.tool.mapper.ObjectMapperInstance;
 
 import java.io.IOException;
 import java.io.OutputStream;

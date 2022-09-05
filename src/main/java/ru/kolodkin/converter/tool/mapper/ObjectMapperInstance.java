@@ -1,4 +1,4 @@
-package ru.kolodkin.converter.tool;
+package ru.kolodkin.converter.tool.mapper;
 
 import lombok.experimental.UtilityClass;
 import org.codehaus.jackson.map.ObjectMapper;

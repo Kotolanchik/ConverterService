@@ -3,6 +3,8 @@ package ru.kolodkin.converter.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import jakarta.xml.bind.JAXBException;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ContentDisposition;
@@ -17,17 +19,15 @@ import ru.kolodkin.converter.tool.Validate;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 @Api("Контроллер для работы с конвертером и файлами сервера.")
 public class ConverterController {
     @Value("${upload.path}")
     private String uploadPath;
     private final ConverterService converterService;
-
-    public ConverterController(ConverterService converterService) {
-        this.converterService = converterService;
-    }
 
     @PostMapping("/upload")
     @ApiOperation("Загрузка файла на сервер")
@@ -42,12 +42,19 @@ public class ConverterController {
     @GetMapping("/convert")
     @ApiOperation("Конвертация файла с загрузкой и сохранением результата на сервере")
     public String convert(@RequestParam("convertType") String converterType,
-                          @RequestParam("firstFile") String firstFile,
-                          @RequestParam("secondFile") String secondFile) throws IOException, JAXBException {
-        Validate.validateArgument(new String[]{converterType, firstFile, secondFile});
+                          @RequestParam("firstFile") String firstFile) throws IOException, JAXBException {
+        Validate.validateArgument(new String[]{converterType, firstFile});
         Validate.checkFileNotExistOnServer(uploadPath + firstFile);
 
-        return converterService.convert(converterType, firstFile, secondFile);
+        return converterService.convert(
+                converterType,
+                firstFile,
+                String.format(
+                        "%s.%s",
+                        UUID.randomUUID().toString(),
+                        StringUtils.equals(converterType, "XML2JSON") ? "json" : "xml"
+                )
+        );
     }
 
     @GetMapping("/download")
@@ -75,15 +82,18 @@ public class ConverterController {
     @PostMapping("/convert/unique")
     @ApiOperation("Конвертация файлов без сохранения на сервере")
     public ResponseEntity uniqueConvert(@RequestParam("convertType") String converterType,
-                                        @RequestParam("firstFile") MultipartFile firstFile,
-                                        @RequestParam("secondFile") String secondFile) throws IOException, JAXBException {
-        Validate.validateArgument(new String[]{converterType, firstFile.getOriginalFilename(), secondFile});
+                                        @RequestParam("firstFile") MultipartFile firstFile) throws IOException, JAXBException {
+        Validate.validateArgument(new String[]{converterType, firstFile.getOriginalFilename()});
         Validate.checkUploadFileOnServer(firstFile);
 
         HttpHeaders headers = new HttpHeaders();
         ContentDisposition disposition = ContentDisposition
                 .builder("attachment")
-                .filename(secondFile)
+                .filename(String.format(
+                        "%s.%s",
+                        UUID.randomUUID().toString(),
+                        StringUtils.equals(converterType, "XML2JSON") ? "json" : "xml")
+                )
                 .build();
         headers.setContentDisposition(disposition);
 
